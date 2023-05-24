@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import io from 'socket.io-client';
 
 // Custom hook to handle socket connection
 const useSocket = (url, event, handler) => {
@@ -76,11 +75,9 @@ function Canvas({ color }) {
                     div key = { `${x}-${y}` }
                     className = "pixel"
                     style = {
-                        { backgroundColor: pixels[y * 120 + x] }
-                    }
+                        { backgroundColor: pixels[y * 120 + x] } }
                     onClick = {
-                        () => handlePixelClick(x, y)
-                    }
+                        () => handlePixelClick(x, y) }
                     />
                 );
             }
