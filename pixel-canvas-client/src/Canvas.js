@@ -54,7 +54,7 @@ function Canvas({ color }) {
           />
         );
       }
-      rows.push(<div key={y} className="pixel-row">{row}</div>);
+      rows.push(<div key={y} className="pixel-row grid">{row}</div>);
     }
     return rows;
   };
