@@ -34,6 +34,9 @@ db.query('SELECT * FROM pixels', (error, results) => {
     results.forEach(pixel => {
         pixels[pixel.y * 120 + pixel.x] = pixel.color;
     });
+
+    // Emit initial state to connected clients
+    io.emit('initialState', pixels);
 });
 
 app.get('/api/canvas', (req, res) => {
