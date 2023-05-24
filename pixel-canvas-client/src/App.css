@@ -25,18 +25,19 @@ body {
     cursor: crosshair;
 }
 
-.pixel {
-    position: relative;
-    width: 100%;
-    padding-bottom: 100%;
-    /* This makes the height equal to the width */
-    border: 0.1px solid rgba(85, 85, 85, 0.075);
-    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.1);
-}
-
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15px, 1fr));
+    grid-template-columns: repeat(120, 1fr);
+}
+
+.pixel {
+    border: 0.1px solid rgba(85, 85, 85, 0.075);
+    box-shadow: 0px 0px 1px 1px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    padding-top: 100%;
+    /* Make height equal to width */
+    position: relative;
+    /* For absolute positioning of inner div */
 }
 
 .color {
