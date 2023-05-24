@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
-import { FixedSizeGrid as Grid } from 'react-window';
+import { FixedSizeGrid } from 'react-window';
 
-const Pixel = React.memo(({ columnIndex, rowIndex, style, color, pixels, setPixels }) => {
+const Pixel = ({ columnIndex, rowIndex, style, color, pixels, setPixels }) => {
     const handlePixelClick = (x, y) => {
         axios.post('http://45.33.114.158:3001/api/canvas', { x, y, color })
             .then(response => {
@@ -28,7 +28,7 @@ const Pixel = React.memo(({ columnIndex, rowIndex, style, color, pixels, setPixe
             () => handlePixelClick(columnIndex, rowIndex) }
         />
     );
-});
+};
 
 const Canvas = ({ color }) => {
     const [pixels, setPixels] = useState(new Array(120 * 120).fill('#FFFFFF'));
@@ -57,7 +57,7 @@ const Canvas = ({ color }) => {
     }, []);
 
     return ( <
-        Grid className = "Canvas"
+        FixedSizeGrid className = "Canvas"
         columnCount = { 120 }
         columnWidth = { 10 }
         height = { 1200 }
@@ -75,7 +75,7 @@ const Canvas = ({ color }) => {
                 />
             )
         } <
-        /Grid>
+        /FixedSizeGrid>
     );
 };
 
