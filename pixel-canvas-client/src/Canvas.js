@@ -3,6 +3,33 @@ import axios from 'axios';
 import io from 'socket.io-client';
 import { FixedSizeGrid as Grid } from 'react-window';
 
+const Pixel = React.memo(({ columnIndex, rowIndex, style, color, pixels, setPixels }) => {
+    const handlePixelClick = (x, y) => {
+        axios.post('http://45.33.114.158:3001/api/canvas', { x, y, color })
+            .then(response => {
+                setPixels(prevPixels => {
+                    const newPixels = [...prevPixels];
+                    newPixels[y * 120 + x] = color;
+                    return newPixels;
+                });
+            })
+            .catch(console.error);
+    };
+
+    return ( <
+        div className = "pixel"
+        style = {
+            {
+                ...style,
+                backgroundColor: pixels[rowIndex * 120 + columnIndex],
+            }
+        }
+        onClick = {
+            () => handlePixelClick(columnIndex, rowIndex) }
+        />
+    );
+});
+
 const Canvas = ({ color }) => {
     const [pixels, setPixels] = useState(new Array(120 * 120).fill('#FFFFFF'));
     const socket = io('http://45.33.114.158:3001');
@@ -29,31 +56,6 @@ const Canvas = ({ color }) => {
         return () => socket.off('pixelUpdated');
     }, []);
 
-    const handlePixelClick = (x, y) => {
-        axios.post('http://45.33.114.158:3001/api/canvas', { x, y, color })
-            .then(response => {
-                setPixels(prevPixels => {
-                    const newPixels = [...prevPixels];
-                    newPixels[y * 120 + x] = color;
-                    return newPixels;
-                });
-            })
-            .catch(console.error);
-    };
-
-    const Pixel = ({ columnIndex, rowIndex, style }) => ( <
-        div className = "pixel"
-        style = {
-            {
-                ...style,
-                backgroundColor: pixels[rowIndex * 120 + columnIndex],
-            }
-        }
-        onClick = {
-            () => handlePixelClick(columnIndex, rowIndex) }
-        />
-    );
-
     return ( <
         Grid className = "Canvas"
         columnCount = { 120 }
@@ -62,7 +64,17 @@ const Canvas = ({ color }) => {
         rowCount = { 120 }
         rowHeight = { 10 }
         width = { 1200 } >
-        { Pixel } <
+        {
+            ({ columnIndex, rowIndex, style }) => ( <
+                Pixel columnIndex = { columnIndex }
+                rowIndex = { rowIndex }
+                style = { style }
+                color = { color }
+                pixels = { pixels }
+                setPixels = { setPixels }
+                />
+            )
+        } <
         /Grid>
     );
 };
