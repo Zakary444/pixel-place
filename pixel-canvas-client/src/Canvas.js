@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
-import { FixedSizeGrid } from 'react-window';
+import { VariableSizeGrid as Grid } from 'react-window';
 
 const Pixel = ({ columnIndex, rowIndex, style, color, pixels, setPixels }) => {
     const handlePixelClick = (x, y) => {
@@ -25,7 +25,8 @@ const Pixel = ({ columnIndex, rowIndex, style, color, pixels, setPixels }) => {
             }
         }
         onClick = {
-            () => handlePixelClick(columnIndex, rowIndex) }
+            () => handlePixelClick(columnIndex, rowIndex)
+        }
         />
     );
 };
@@ -56,26 +57,26 @@ const Canvas = ({ color }) => {
         return () => socket.off('pixelUpdated');
     }, []);
 
-    return ( <
-        FixedSizeGrid className = "Canvas"
-        columnCount = { 120 }
-        columnWidth = { 10 }
-        height = { 1200 }
-        rowCount = { 120 }
-        rowHeight = { 10 }
-        width = { 1200 } >
-        {
-            ({ columnIndex, rowIndex, style }) => ( <
-                Pixel columnIndex = { columnIndex }
-                rowIndex = { rowIndex }
-                style = { style }
-                color = { color }
-                pixels = { pixels }
-                setPixels = { setPixels }
-                />
-            )
-        } <
-        /FixedSizeGrid>
+    return ( < Grid className = 'Canvas'
+    columnCount={120}
+    columnWidth={index => 10}  // function to calculate column width
+    rowCount={120}
+    rowHeight={index => 10}  // function to calculate row height
+    height={1200}
+    width={1200}
+  >
+    {({ columnIndex, rowIndex, style }) => (
+      <Pixel
+        columnIndex={columnIndex}
+        rowIndex={rowIndex}
+        style={style}
+        color={color}
+        pixels={pixels}
+        setPixels={setPixels}
+      />
+    )}
+  </Grid>
+
     );
 };
 
