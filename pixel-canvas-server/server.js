@@ -8,10 +8,8 @@ const bodyParser = require('body-parser');
 
 const app = express();
 app.use(cors());
-// You should add the middleware after creating the express app, but before defining routes:
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Connect to MySQL
 const db = mysql.createConnection({
@@ -26,17 +24,24 @@ db.connect(function(err) {
     console.log("Connected to MySQL!");
 });
 
-app.get('/api/canvas', (req, res) => {
-    // Fetch current state of canvas
-    db.query('SELECT * FROM pixels', (error, results) => {
-        if (error) throw error;
-        res.json(results);
+// Initialize pixel data
+let pixels = new Array(120 * 120).fill('#FFFFFF');
+
+// Fetch initial state of canvas
+db.query('SELECT * FROM pixels', (error, results) => {
+    if (error) throw error;
+
+    results.forEach(pixel => {
+        pixels[pixel.y * 120 + pixel.x] = pixel.color;
     });
 });
 
+app.get('/api/canvas', (req, res) => {
+    res.json(pixels);
+});
+
 app.post('/api/canvas', (req, res) => {
-    // Update a pixel's color
-    const {x, y, color} = req.body;
+    const { x, y, color } = req.body;
     const query = 'REPLACE INTO pixels (x, y, color) VALUES (?, ?, ?)';
     db.query(query, [x, y, color], (error) => {
         if (error) {
@@ -44,8 +49,11 @@ app.post('/api/canvas', (req, res) => {
             throw error;
         }
 
+        // Update pixel in memory
+        pixels[y * 120 + x] = color;
+
         // Emit 'pixelUpdated' event
-        io.emit('pixelUpdated', {x, y, color});
+        io.emit('pixelUpdated', { x, y, color });
 
         res.status(200).send();
     });
@@ -55,12 +63,12 @@ const server = http.createServer(app);
 
 // Socket setup
 const io = socketIo(server, {
-  cors: {
-    origin: "http://45.33.114.158:3000",
-    methods: ["GET", "POST"],
-    allowedHeaders: ["my-custom-header"],
-    credentials: true
-  }
+    cors: {
+        origin: "http://45.33.114.158:3000",
+        methods: ["GET", "POST"],
+        allowedHeaders: ["my-custom-header"],
+        credentials: true
+    }
 });
 
 // Set the port
