@@ -42,28 +42,31 @@ function Canvas({ color }) {
 
   const renderPixels = () => {
     let rows = [];
-    for(let y = 0; y < 120; y++) {
-      let row = [];
-      for(let x = 0; x < 120; x++) {
-        row.push(
-          <div 
-            key={`${x}-${y}`}
-            className="pixel" 
-            style={{backgroundColor: pixels[y * 120 + x]}} 
-            onClick={() => handlePixelClick(x, y)} 
-          />
-        );
-      }
-      rows.push(<div key={y} className="pixel-row grid">{row}</div>);
+    for (let y = 0; y < 120; y++) {
+        let row = [];
+        for (let x = 0; x < 120; x++) {
+            row.push(
+                <div 
+                    key={`${x}-${y}`}
+                    className="pixel" 
+                >
+                    <div
+                        style={{ position: 'absolute', top: 0, bottom: 0, left: 0, right: 0, backgroundColor: pixels[y * 120 + x] }} 
+                        onClick={() => handlePixelClick(x, y)}
+                    />
+                </div>
+            );
+        }
+        rows.push(<div key={y} className="pixel-row">{row}</div>);
     }
     return rows;
-  };
+};
 
-  return (
+return (
     <div className="Canvas">
-      {renderPixels()}
+        {renderPixels()}
     </div>
-  );
+);
 }
 
 export default Canvas;
