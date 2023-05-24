@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import io from 'socket.io-client';
+import { FixedSizeGrid as Grid } from 'react-window';
 
-function Canvas({ color }) {
+const Canvas = ({ color }) => {
     const [pixels, setPixels] = useState(new Array(120 * 120).fill('#FFFFFF'));
     const socket = io('http://45.33.114.158:3001');
 
@@ -40,31 +41,30 @@ function Canvas({ color }) {
             .catch(console.error);
     };
 
-    const renderPixels = () => {
-        let rows = [];
-        for (let y = 0; y < 120; y++) {
-            let row = [];
-            for (let x = 0; x < 120; x++) {
-                row.push( <
-                    div key = { `${x}-${y}` }
-                    className = "pixel"
-                    style = {
-                        { backgroundColor: pixels[y * 120 + x] } }
-                    onClick = {
-                        () => handlePixelClick(x, y) }
-                    />
-                );
+    const Pixel = ({ columnIndex, rowIndex, style }) => ( <
+        div className = "pixel"
+        style = {
+            {
+                ...style,
+                backgroundColor: pixels[rowIndex * 120 + columnIndex],
             }
-            rows.push( < div key = { y }
-                className = "pixel-row grid" > { row } < /div>);
-            }
-            return rows;
-        };
+        }
+        onClick = {
+            () => handlePixelClick(columnIndex, rowIndex) }
+        />
+    );
 
-        return ( <
-            div className = "Canvas" > { renderPixels() } <
-            /div>
-        );
-    }
+    return ( <
+        Grid className = "Canvas"
+        columnCount = { 120 }
+        columnWidth = { 10 }
+        height = { 1200 }
+        rowCount = { 120 }
+        rowHeight = { 10 }
+        width = { 1200 } >
+        { Pixel } <
+        /Grid>
+    );
+};
 
-    export default Canvas;
+export default Canvas;
