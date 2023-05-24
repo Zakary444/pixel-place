@@ -32,7 +32,8 @@ const Pixel = ({ columnIndex, rowIndex, style, color, pixels, setPixels }) => {
 };
 
 const Canvas = ({ color }) => {
-    const [pixels, setPixels] = useState(new Array(120 * 120).fill('#FFFFFF'));
+    const initialPixels = useMemo(() => new Array(120 * 120).fill('#FFFFFF'), []);
+    const [pixels, setPixels] = useState(initialPixels);
     const socket = io('http://45.33.114.158:3001');
 
     useEffect(() => {
